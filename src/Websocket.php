@@ -48,7 +48,6 @@ class WebSocket {
 	 * @return bool
 	 */
 	function send($message) {
-		echo "envía";
 		// Build json dengan seal.
 		$raw = $this->seal(json_encode([
 			'message'=> $message
@@ -183,12 +182,12 @@ class WebSocket {
 					
 			while ($registro = $resultado->fetch())
 			{ 	
-				//sleep(10);
 				$current_to_user_id = $registro['to_user_id'];
 				$current_from_user_id = $registro['from_user_id'];
 				$user_message = $registro['text'];
+				$fromUserName = $registro['fromUserName'];
 				$this->send((array('type'=>'chatmsg', 'toUserId'=>$current_to_user_id, 'fromUserId'=>$current_from_user_id, 
-					'text'=>$user_message, 'timestamp'=>new \DateTime($registro['timestamp']), "fromUserName"=>"yo")));
+					'text'=>$user_message, 'timestamp'=>new \DateTime($registro['timestamp']), "fromUserName"=>$fromUserName)));
 			
 				//prepare data to be sent to client
 					// $response_text = mask(json_encode(array('type'=>'usermsg', 'toUserid'=>$current_to_user_id, 'fromUserId'=>$current_from_user_id, 
@@ -206,10 +205,6 @@ class WebSocket {
 				$userId = $registro['id'];
 				$userName = $registro['username'];
 				$this->send((array('type'=>'usermsg', 'id'=>$userId, 'userName'=>$userName)));
-				//prepare data to be sent to client
-				// $response_text = mask(json_encode(array('type'=>'usermsg', 'toUserid'=>$current_to_user_id, 'fromUserId'=>$current_from_user_id, 
-				// 'text'=>$user_message, 'timestamp'=>new DateTime($registro['timestamp']), "fromUserName"=>"yo")));
-				// send_message($response_text); //send data
 				$this->pdo->exec('UPDATE user SET sended  = true WHERE id = ' . $registro['id']);
 				
 			}
