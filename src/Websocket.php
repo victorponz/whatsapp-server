@@ -188,11 +188,6 @@ class WebSocket {
 				$fromUserName = $registro['fromUserName'];
 				$this->send((array('type'=>'chatmsg', 'toUserId'=>$current_to_user_id, 'fromUserId'=>$current_from_user_id, 
 					'text'=>$user_message, 'timestamp'=>new \DateTime($registro['timestamp']), "fromUserName"=>$fromUserName)));
-			
-				//prepare data to be sent to client
-					// $response_text = mask(json_encode(array('type'=>'usermsg', 'toUserid'=>$current_to_user_id, 'fromUserId'=>$current_from_user_id, 
-				// 'text'=>$user_message, 'timestamp'=>new DateTime($registro['timestamp']), "fromUserName"=>"yo")));
-				// send_message($response_text); //send data
 				$this->pdo->exec('UPDATE message SET sended  = true WHERE id = ' . $registro['id']);
 				
 			}
@@ -255,12 +250,6 @@ class WebSocket {
 								echo $messageObj->type; ;
 								echo $messageObj->fromUserId . " " . $messageObj->toUserId;
 							}
-							//No lo envío a todos
-							// if (isset($messageObj->name) && isset($messageObj->message)) {
-							// 	//Envíelo de vuelta, transmita a todos los clientes conectados.
-							// 	$this->send("{$messageObj->name} : {$messageObj->message}");
-							// }
-							
 							break 2;
 						}
 					}
