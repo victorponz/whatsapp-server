@@ -199,7 +199,7 @@ class WebSocket {
 				//sleep(10);
 				$userId = $registro['id'];
 				$userName = $registro['username'];
-				$this->send((array('type'=>'usermsg', 'id'=>$userId, 'userName'=>$userName)));
+				$this->send((array('type'=>'usermsg', 'id'=>$userId, 'userName'=>$userName, 'info'=>$registro['info'], "image"=>$registro['image'])));
 				$this->pdo->exec('UPDATE user SET sended  = true WHERE id = ' . $registro['id']);
 				
 			}
