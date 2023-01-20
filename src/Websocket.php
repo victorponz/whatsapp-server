@@ -19,6 +19,7 @@ class WebSocket {
 	public $port;
 	public $clients;
 	public $pdo;
+	private $connections;
 	
 	/**
 	 * Construct
@@ -48,16 +49,24 @@ class WebSocket {
 	 * @return bool
 	 */
 	function send($message) {
+		
 		// Build json dengan seal.
 		$raw = $this->seal(json_encode([
 			'message'=> $message
 		]));
+
+		if (is_array($message) && $message["type"] == 'chatmsg'){
+			if (isset($this->connections[$message["toUserId"]]))
+				@socket_write($this->connections[$message["toUserId"] ], $raw, strlen($raw));
+			if (isset($this->connections[$message["fromUserId"]]))	
+				@socket_write($this->connections[$message["fromUserId"] ], $raw, strlen($raw));
+		}else{
 		
-		foreach($this->clients as $client)
-		{
-			@socket_write($client, $raw, strlen($raw));
+			foreach($this->clients as $client)
+			{
+				@socket_write($client, $raw, strlen($raw));
+			}
 		}
-		
 		return true;
 	}
 
@@ -161,7 +170,7 @@ class WebSocket {
 		$this->clients = [
 			$this->server
 		];
-
+		$this->connections = [];
 		// Set address and port.
 			$address = $this->address;
 			$port = $this->port;
@@ -249,6 +258,7 @@ class WebSocket {
 							if (isset($messageObj->type) && $messageObj->type == 'chatData'){
 								echo $messageObj->type; ;
 								echo $messageObj->fromUserId . " " . $messageObj->toUserId;
+								$this->connections[$messageObj->fromUserId] =  $newClientsResource;
 							}
 							break 2;
 						}
